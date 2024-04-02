@@ -1,7 +1,8 @@
 import express from "express";
 import {DB_CONFID} from "./src/configs/db.config.js"
 import userRouter from "./src/routers/user.router.js"
-
+import mongoose from "mongoose";
+import { SERVER_CONFIG } from "./src/configs/server.config.js";
 const DB_CONNECTION = "mongodb+srv://" + DB_CONFID.username + ":" + DB_CONFID.password + "@cluster0.6v4qlgk.mongodb.net";
 
 const app = express()

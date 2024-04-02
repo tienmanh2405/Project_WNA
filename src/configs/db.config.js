@@ -11,6 +11,6 @@ export const DB_CONFID = {
             contextPath : "/comments"
         }
     },
-    username: "nhom6",
-    password: "56UWqWVaz8ics2lT"
+    username: "nguyentienmanh",
+    password: "NtFlNcE5heeWHlGf"
 }
