@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 // const User_Model_Name = "User";
@@ -22,8 +23,8 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     gender: {
-        type: String,
-        enum: ["male", "female","other"]
+        type: Boolean,
+        default: 0
     },
     dayOfBirth: {
         type: Date

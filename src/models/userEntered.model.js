@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const taskSchema = new mongoose.Schema({
     project: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,6 +20,5 @@ const taskSchema = new mongoose.Schema({
         enum: ['Not Started', 'In Progress', 'Waiting','Deferred','Done']
     }
 });
-
 
 export const TaskModel = mongoose.model("Task", taskSchema);
