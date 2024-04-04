@@ -1,17 +1,16 @@
 import Joi from "joi";
 
-const register = {
-    body: ({
+export const register = {
+    body: Joi.object({
         userName: Joi.string()
             .alphanum()
             .min(5)
             .max(30)
             .required(),
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()_+\\[\]{3,30}$'))
             .required(),
-        repeat_password: Joi.string()
-            .ref('password'),
+        repeat_password: Joi.ref('password'),
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
         role: Joi.string()
@@ -28,15 +27,14 @@ const register = {
     }).with('password', 'repeat_password')
 };
 
-const login = {
+export const login = {
     body: {
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
             .required(),
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()_+\\[\]{3,30}$'))
             .required()
     }
 };
 
-export default { register, login };

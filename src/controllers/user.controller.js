@@ -10,13 +10,19 @@ const getAllUsers = async (req, res) => {
   try {
     const role = req.userData.role;
     if (role == 'user') {
-      return res.status(404).json({ msg: "Not have permission" });
+      const userId = req.userData.userId; 
+      const reqUserId = req.params.userId;
+      if (userId !== reqUserId) { 
+        return res.status(403).json({
+          msg: "No update permission",
+        });
+      }
     }
     const allUsers = await UserModel.find();
     if (!allUsers || allUsers.length === 0) {
       return res.status(404).json({ msg: "No users found." });
     }
-    res.status(200).json({ users: allUsers });
+    res.status(200).json({ allUsers: allUsers });
   } catch (error) {
     res.status(500).json({ msg: error });
   }

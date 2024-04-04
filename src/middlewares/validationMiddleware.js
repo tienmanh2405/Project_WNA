@@ -13,7 +13,7 @@ const validation = (schema) => {
             if (error) {
                 return res.status(400).json({
                     msg: 'Validation fail!',
-                    error: error
+                    error: error.details
                 })
             } else {
                 next()
@@ -27,4 +27,4 @@ const validation = (schema) => {
     }
 }
 
-module.exports = validation
+export default validation
