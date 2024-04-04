@@ -1,8 +1,9 @@
-import Joi from "joi"
+import Joi from "joi";
+
 const register = {
     body: ({
         userName: Joi.string()
-            .alphanum
+            .alphanum()
             .min(5)
             .max(30)
             .required(),
@@ -10,7 +11,7 @@ const register = {
             .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
             .required(),
         repeat_password: Joi.string()
-            .ref(password),
+            .ref('password'),
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
         role: Joi.string()
@@ -24,8 +25,8 @@ const register = {
         phoneNumber: Joi.string()
             .required()
             .pattern(new RegExp('^[0-9]{10}$'))
-    }).with('password','repeat_password')
-}
+    }).with('password', 'repeat_password')
+};
 
 const login = {
     body: {
@@ -36,8 +37,6 @@ const login = {
             .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
             .required()
     }
-}
-module.exports = {
-    register,
-    login
-}
+};
+
+export default { register, login };
