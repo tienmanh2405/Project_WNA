@@ -33,10 +33,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    image: {
+        type: String
     }
-    // image: {
-    //     type: Image
-    // }
 });
 
 export const UserModel = mongoose.model("User", userSchema);

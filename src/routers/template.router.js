@@ -6,12 +6,12 @@ const router = express.Router();
 
 //lay tat ca templates
 router.get('/templates', getAllTemplates);
-//lay template theo id
-router.get('/templates/:id', getTemplateById);
+//lay template theo userId
+router.get('/templates/:userId', getTemplateById);
 //create template
-router.post('/templates',verifyToken, createTemplate);
+router.post('/templates', verifyToken, createTemplate);
 //update template
-router.post('/templates',verifyToken, updateTemplate);
+router.post('/templates', verifyToken, updateTemplate);
 //delet template
-router.delete('/templates',verifyToken, deleteTemplate);
+router.delete('/templates', verifyToken, deleteTemplate);
 export default router;

@@ -10,9 +10,9 @@ const getAllUsers = async (req, res) => {
   try {
     const role = req.userData.role;
     if (role == 'user') {
-      const userId = req.userData.userId; 
+      const userId = req.userData.userId;
       const reqUserId = req.params.userId;
-      if (userId !== reqUserId) { 
+      if (userId !== reqUserId) {
         return res.status(403).json({
           msg: "No update permission",
         });
@@ -30,9 +30,9 @@ const getAllUsers = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const userId = req.userData.userId; 
+    const userId = req.userData.userId;
     const reqUserId = req.params.userId;
-    if (userId !== reqUserId) { 
+    if (userId !== reqUserId) {
       return res.status(403).json({
         msg: "No update permission",
       });
@@ -44,38 +44,27 @@ const updateUser = async (req, res) => {
       });
     }
     const { userName, gender, dayOfBirth, phoneNumber } = req.body;
-    // console.log(req.body);
-    // phoneNumber = body.phoneNumber;
-    //  console.log(phoneNumber);
-    // checkPhone = await UserModel.findOne({ phoneNumber });
-   
-    // if (!checkPhone) {
-    //   return res.status(400).json({
-    //     msg: "Phone is existed",
-    //   });
-    // }
-
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const updateUser = await UserModel.findByIdAndUpdate(reqUserId, { userName, password : hashedPassword, gender,dayOfBirth, phoneNumber}, { new: true });
-                                      //mongoose
+    const updateUser = await UserModel.findByIdAndUpdate(reqUserId, { userName, password: hashedPassword, gender, dayOfBirth, phoneNumber }, { new: true });
+    //mongoose
     if (!updateUser) {
       return res.status(404).json({
-          msg: "User not found",
+        msg: "User not found",
       });
     }
-    
+
     res.status(200).json({
       msg: "User updated successfully",
       updateUser: updateUser,
     });
   } catch (error) {
-    res.status(400).json({ msg: error});
+    res.status(400).json({ msg: error });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
-    const role = req.userData.role; 
+    const role = req.userData.role;
     const reqUserId = req.params.userId;
 
     // Kiểm tra quyền xóa
@@ -105,48 +94,48 @@ const deleteUser = async (req, res) => {
 
 
 const register = async (req, res) => {
-    try {
-        const {
-            userName,
-            password,
-          email,
-          role,
-          gender,
-          dayOfBirth,
-          phoneNumber,
-      } = req.body;
-      const existingUser = await UserModel.findOne({ email });
-       if (existingUser) {
-        return res.status(400).json({ msg: 'Email is existed' });
-      }
-      const hashedPassword = await bcrypt.hash(password, 10);
-       const newUser = new UserModel({ userName, email, password: hashedPassword, role, gender, dayOfBirth, phoneNumber });
-      await newUser.save();
-        res.status(201).json({msg:"success register",UserModel: newUser});
-    } catch (error) {
-        res.status(400).json({msg: error});
+  try {
+    const {
+      userName,
+      password,
+      email,
+      role,
+      gender,
+      dayOfBirth,
+      phoneNumber,
+    } = req.body;
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: 'Email is existed' });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new UserModel({ userName, email, password: hashedPassword, role, gender, dayOfBirth, phoneNumber });
+    await newUser.save();
+    res.status(201).json({ msg: "success register", UserModel: newUser });
+  } catch (error) {
+    res.status(400).json({ msg: error });
+  }
 }
 const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const checkUser = await UserModel.findOne({ email });
-        if (!checkUser) throw new Error('User not found');
-        const isValidPassword = await bcrypt.compare(password, checkUser.password);
-        if (!isValidPassword) throw new Error('incorrect account password');
+  try {
+    const { email, password } = req.body;
+    const checkUser = await UserModel.findOne({ email });
+    if (!checkUser) throw new Error('User not found');
+    const isValidPassword = await bcrypt.compare(password, checkUser.password);
+    if (!isValidPassword) throw new Error('incorrect account password');
 
-      const secretKey = process.env.secretKey;
-        const token = jwt.sign({userId : checkUser._id, role : checkUser.role}, secretKey,{ expiresIn: '1h' });
-        res.json({ msg: "Sign up success", token });
-    } catch(error) {
-        res.status(400).json({ msg: error.error });
-    }
+    const secretKey = process.env.secretKey;
+    const token = jwt.sign({ userId: checkUser._id, role: checkUser.role }, secretKey, { expiresIn: '1h' });
+    res.json({ msg: "Sign up success", token });
+  } catch (error) {
+    res.status(400).json({ msg: error.error });
+  }
 }
 
 export {
-    getAllUsers,
+  getAllUsers,
   updateUser,
   deleteUser,
-    register,
-    login
+  register,
+  login
 }
