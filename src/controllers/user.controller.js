@@ -3,8 +3,12 @@ import { NullOrUndefined } from "../untils/checknull.until.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { v2 as cloudinary } from 'cloudinary';
+import { DB_CONFID } from "../configs/db.config.js";
 
 dotenv.config();
+// connect cloudianry
+cloudinary.config(DB_CONFID.cloudinary_connect);
 
 const getAllUsers = async (req, res) => {
   try {
@@ -109,7 +113,25 @@ const register = async (req, res) => {
       return res.status(400).json({ msg: 'Email is existed' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new UserModel({ userName, email, password: hashedPassword, role, gender, dayOfBirth, phoneNumber });
+    
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'File available' });
+    }
+    const dataUrl = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+    const fileName = file.originalname.split('.')[0];
+    cloudinary.uploader.upload(dataUrl, {
+      public_id: fileName,
+      resource_type: 'auto',
+      // có thể thêm field folder nếu như muốn tổ chức
+    }, (err, result) => {
+      if (result) {
+        console.log(result.secure_url);
+        // lấy secure_url từ đây để lưu vào database.
+      }
+    });
+
+    const newUser = new UserModel({ userName, email, password: hashedPassword, role, gender, dayOfBirth, phoneNumber, image: file });
     await newUser.save();
     res.status(201).json({ msg: "success register", UserModel: newUser });
   } catch (error) {
