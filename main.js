@@ -1,13 +1,17 @@
 import express from "express";
-import {DB_CONFID} from "./src/configs/db.config.js"
+import { DB_CONFID } from "./src/configs/db.config.js"
 import userRouter from "./src/routers/user.router.js"
 import mongoose from "mongoose";
 import { SERVER_CONFIG } from "./src/configs/server.config.js";
+import cors from 'cors';
+
 const DB_CONNECTION = "mongodb+srv://" + DB_CONFID.username + ":" + DB_CONFID.password + "@cluster0.6v4qlgk.mongodb.net";
 
 const app = express()
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use('/users', userRouter);
 // app.use('/template',)
