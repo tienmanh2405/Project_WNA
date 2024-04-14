@@ -113,7 +113,7 @@ const register = async (req, res) => {
       return res.status(400).json({ msg: 'Email is existed' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const file = req.file;
     if (!file) {
       return res.status(400).json({ error: 'File available' });
@@ -131,7 +131,7 @@ const register = async (req, res) => {
       }
     });
 
-    const newUser = new UserModel({ userName, email, password: hashedPassword, role, gender, dayOfBirth, phoneNumber, image: file });
+    const newUser = new UserModel({ userName, email, password: hashedPassword, role: 'user', gender, dayOfBirth, phoneNumber, image: file });
     await newUser.save();
     res.status(201).json({ msg: "success register", UserModel: newUser });
   } catch (error) {
