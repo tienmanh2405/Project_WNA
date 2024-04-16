@@ -1,30 +1,30 @@
 import Joi from 'joi';
 import _ from 'lodash';
+
 const validation = (schema) => {
     return async (req, res, next) => {
         try {
-            const _schema = Joi.object(schema);
+            // Combine req.body and req.files into one object
+            const data = { ...req.body, ...req.files };
 
-            const valid = await _schema.validate(_.pick(req, Object.keys(schema)))
-
-            console.log('------validation', valid, schema)
-            const {error} = valid;
+            // Validate data using the provided schema
+            const { error } = Joi.object(schema).validate(data);
 
             if (error) {
                 return res.status(400).json({
                     msg: 'Validation fail!',
                     error: error.details
-                })
+                });
             } else {
-                next()
+                next();
             }
         } catch (e) {
             return res.status(400).json({
                 msg: 'Validation fail!',
                 error: e
-            })
+            });
         }
-    }
-}
+    };
+};
 
-export default validation
+export default validation;

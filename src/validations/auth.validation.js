@@ -3,29 +3,26 @@ import Joi from "joi";
 export const register = {
     body: Joi.object({
         userName: Joi.string()
-            .alphanum()
             .min(5)
             .max(30)
             .required(),
         password: Joi.string()
             .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()_+\\[\]{3,30}$'))
             .required(),
-        repeat_password: Joi.ref('password'),
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-        role: Joi.string()
-            .valid('admin', 'user')
-            .required(),
-        gender: Joi.number()
+        gender: Joi.string()
             .allow(null)
-            .valid(1, 0, null),
+            .valid("Male", "Female", "Other"),
         dayOfBirth: Joi.date()
             .allow(null),
         phoneNumber: Joi.string()
             .required()
-            .pattern(new RegExp('^[0-9]{10}$'))
-    }).with('password', 'repeat_password')
+            .pattern(new RegExp('^[0-9]{10}$')),
+        image: Joi.string(),
+    })
 };
+
 
 export const login = {
     body: {

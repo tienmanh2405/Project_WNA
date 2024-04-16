@@ -17,14 +17,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    role: {
-        type: String,
-        enum: ["admin", "user"],
-        required: true
-    },
+    // role: {
+    //     type: String,
+    //     enum: ["admin", "user"],
+    //     required: true
+    // },
     gender: {
-        type: Boolean,
-        default: 0
+        type: String,
+        enum: ["Male", "Female", "Other"]
     },
     dayOfBirth: {
         type: Date

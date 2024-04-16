@@ -4,11 +4,15 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
-import { DB_CONFID } from "../configs/db.config.js";
+
 
 dotenv.config();
 // connect cloudianry
-cloudinary.config(DB_CONFID.cloudinary_connect);
+cloudinary.config({
+  cloud_name: 'dh0lhvm9l',
+  api_key: '314188383667441',
+  api_secret: 'g_PBWzOuyUVbjMZymyMR8BjwfZE'
+});
 
 const getAllUsers = async (req, res) => {
   try {
@@ -97,13 +101,13 @@ const deleteUser = async (req, res) => {
 };
 
 
+
 const register = async (req, res) => {
   try {
     const {
       userName,
       password,
       email,
-      role,
       gender,
       dayOfBirth,
       phoneNumber,
@@ -113,31 +117,50 @@ const register = async (req, res) => {
       return res.status(400).json({ msg: 'Email is existed' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const file = req.file;
+    // Kiểm tra xem có file hình ảnh được gửi từ client không
     if (!file) {
-      return res.status(400).json({ error: 'File available' });
+      return res.status(400).json({ error: 'Vui lòng chọn một tập tin hình ảnh' });
     }
     const dataUrl = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     const fileName = file.originalname.split('.')[0];
-    cloudinary.uploader.upload(dataUrl, {
-      public_id: fileName,
-      resource_type: 'auto',
-      // có thể thêm field folder nếu như muốn tổ chức
-    }, (err, result) => {
-      if (result) {
-        console.log(result.secure_url);
-        // lấy secure_url từ đây để lưu vào database.
-      }
+
+    // Upload hình ảnh lên Cloudinary và nhận lại URL của hình ảnh đã tải lên
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(dataUrl, {
+        public_id: fileName,
+        resource_type: 'auto',
+        folder: "WNA"
+        // có thể thêm field folder nếu như muốn tổ chức
+      }, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
     });
 
-    const newUser = new UserModel({ userName, email, password: hashedPassword, role: 'user', gender, dayOfBirth, phoneNumber, image: file });
+    const imageUrl = result.secure_url;
+    const newUser = new UserModel({
+      userName,
+      email,
+      password: hashedPassword,
+      role: 'user',
+      gender,
+      dayOfBirth,
+      phoneNumber,
+      image: imageUrl
+    });
     await newUser.save();
     res.status(201).json({ msg: "success register", UserModel: newUser });
+
   } catch (error) {
-    res.status(400).json({ msg: error });
+    console.error("Error registering user:", error);
+    res.status(400).json({ msg: error.message });
   }
 }
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
