@@ -1,6 +1,9 @@
 import express from "express";
 import { DB_CONFID } from "./src/configs/db.config.js"
 import userRouter from "./src/routers/user.router.js"
+import taskRouter from "./src/routers/task.router.js"
+import templateRouter from "./src/routers/template.router.js"
+import projectRouter from "./src/routers/project.router.js"
 import mongoose from "mongoose";
 import { SERVER_CONFIG } from "./src/configs/server.config.js";
 import cors from 'cors';
@@ -14,6 +17,9 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/users', userRouter);
+app.use('/tasks', taskRouter);
+app.use('/projects', projectRouter);
+app.use('/templates', templateRouter);
 // app.use('/template',)
 
 async function main() {

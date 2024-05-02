@@ -5,9 +5,6 @@ export const createProjectSchema = {
         user: Joi.string()
             .alphanum()
             .required(),
-        template: Joi.string()
-            .alphanum()
-            .required(),
         nameProject: Joi.string()
             .required()
             .min(5)

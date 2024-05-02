@@ -7,18 +7,18 @@ import { createProjectSchema, updateProjectSchema } from '../validations/project
 const router = express.Router();
 
 // Lấy tất cả dự án
-router.get('/project/', verifyToken, getAllProjects);
+router.get('/', verifyToken, getAllProjects);
 
 // Lấy thông tin dự án bằng ID
-router.get('/project/:productId', verifyToken, getProjectById);
+router.get('/:productId', verifyToken, getProjectById);
 
 // Tạo dự án mới
-router.post('/project/', verifyToken, validation(createProjectSchema), createProject);
+router.post('/', verifyToken, validation(createProjectSchema), createProject);
 
 // Cập nhật thông tin dự án
-router.put('/project/:productId', verifyToken, validation(updateProjectSchema), updateProject);
+router.put('/:productId', verifyToken, validation(updateProjectSchema), updateProject);
 
 // Xóa dự án
-router.delete('/project/:productId', verifyToken, deleteProject);
+router.delete('/:productId', verifyToken, deleteProject);
 
 export default router;

@@ -1,20 +1,21 @@
 import { ProjectModel } from "../models/project.model.js";
 
+
 const createProject = async (req, res) => {
     try {
-        const role = req.userData.role;
-        if (role == 'user') {
-            const userId = req.userData.userId;
-            const reqUserId = req.params.userId;
-            if (userId !== reqUserId) {
-                return res.status(403).json({
-                    msg: "No update permission",
-                });
-            }
-        }
-        const { user, template, nameProject } = req.body;
+        // const role = req.userData.role;
+        // if (role == 'user') {
+        //     const userId = req.userData.userId;
+        //     const reqUserId = req.params.userId;
+        //     if (userId !== reqUserId) {
+        //         return res.status(403).json({
+        //             msg: "No update permission",
+        //         });
+        //     }
+        // }
+        const { user, nameProject } = req.body;
         // Tạo một bản ghi mới cho dự án
-        const newProject = new ProjectModel({ user, template, nameProject });
+        const newProject = new ProjectModel({ user, nameProject });
         // Lưu dự án vào cơ sở dữ liệu
         await newProject.save();
         res.status(201).json({ message: "Project created successfully", project: newProject });
@@ -54,13 +55,12 @@ const getAllProjects = async (req, res) => {
             const projects = await ProjectModel.find();
             return res.status(200).json({ projects: projects });
         }
-
         // Kiểm tra xem người dùng đã xác thực chưa
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        // Lấy tất cả các dự án của người dùng hiện tại
+        // Lấy tất cả các dự án của người dùng hiện tại { user: userId }
         const projects = await ProjectModel.find({ user: userId });
         res.status(200).json({ projects: projects });
     } catch (error) {
@@ -81,9 +81,9 @@ const updateProject = async (req, res) => {
                 return res.status(403).json({ message: "No permission to update this project" });
             }
         }
-        const { template, nameProject } = req.body;
+        const { nameProject } = req.body;
         // Tìm kiếm và cập nhật dự án trong cơ sở dữ liệu
-        const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { template, nameProject }, { new: true });
+        const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { nameProject }, { new: true });
         if (!updatedProject) {
             return res.status(404).json({ message: "Project not found" });
         }

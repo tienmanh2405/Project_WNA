@@ -19,7 +19,7 @@ export const register = {
         phoneNumber: Joi.string()
             .required()
             .pattern(new RegExp('^[0-9]{10}$')),
-        image: Joi.string(),
+        image: Joi.any(),
     })
 };
 

@@ -1,7 +1,7 @@
 import { TaskModel } from '../models/task.model.js';
 
 // Lấy tất cả các công việc theo userId
-const getAllTasks = async (req, res) => {
+const getTasks = async (req, res) => {
     try {
         const role = req.userData.role;
         if (role == 'user') {
@@ -21,20 +21,20 @@ const getAllTasks = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const getAllTasks = async (req, res) => {
+    try {
+        const tasks = await TaskModel.find();
+        res.status(200).json({ tasks: tasks });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 const getAllTasksByProduct = async (req, res) => {
     try {
-        const role = req.userData.role;
         const userId = req.userData.userId;
         const productId = req.params.productId;
-
-        // Nếu người dùng không phải là user, không cho phép truy cập
-        if (role !== 'user') {
-            return res.status(403).json({
-                msg: "Only users are allowed to access tasks by product",
-            });
-        }
-
+        // console.log(productId);
         // Lấy tất cả các công việc trong sản phẩm của người dùng hiện tại
         const tasks = await TaskModel.find({ project: productId, user: userId });
         res.status(200).json({ tasks: tasks });
@@ -63,8 +63,9 @@ const getTaskById = async (req, res) => {
 // Tạo một công việc mới
 const createTask = async (req, res) => {
     try {
-        const { user, project, description, dueDate, priority, taskProcess } = req.body;
-        const newTask = new TaskModel({ user, project, description, dueDate, priority, taskProcess });
+        const userId = req.userData.userId;
+        const { description, project, dueDate, priority, taskProcess, completed } = req.body;
+        const newTask = new TaskModel({ user: userId, project, description, dueDate, priority, taskProcess, completed });
         await newTask.save();
         res.status(201).json({ message: "Task created successfully", task: newTask });
     } catch (error) {
@@ -88,8 +89,8 @@ const updateTask = async (req, res) => {
             }
         }
 
-        const { description, dueDate, priority, taskProcess } = req.body;
-        const updatedTask = await TaskModel.findByIdAndUpdate(taskId, { description, dueDate, priority, taskProcess }, { new: true });
+        const { description, dueDate, priority, taskProcess, completed } = req.body;
+        const updatedTask = await TaskModel.findByIdAndUpdate(taskId, { description, dueDate, priority, taskProcess, completed }, { new: true });
         if (!updatedTask) {
             return res.status(404).json({ message: "Task not found" });
         }
@@ -124,4 +125,4 @@ const deleteTask = async (req, res) => {
     }
 };
 
-export { getAllTasks, getTaskById, createTask, updateTask, deleteTask, getAllTasksByProduct };
+export { getAllTasks, getTasks, getTaskById, createTask, updateTask, deleteTask, getAllTasksByProduct };

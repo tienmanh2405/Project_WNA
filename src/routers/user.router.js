@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, updateUser, deleteUser, register, login } from '../controllers/user.controller.js';
+import { getAllUsers, updateUser, deleteUser, register, login, getUsers, requestRefreshToken } from '../controllers/user.controller.js';
 import { verifyToken } from '../middlewares/authMiddlewares.js';
 import validation from '../middlewares/validationMiddleware.js';
 import { register as registerSchema, login as loginSchema } from '../validations/auth.validation.js';
@@ -22,5 +22,10 @@ router.put('/:userId', verifyToken, updateUser);
 
 // Xóa người dùng chi admin
 router.delete('/:userId', verifyToken, deleteUser);
+//test
+router.post('/getuser', getUsers);
+
+// requestRefreshToken
+router.post('/refreshToken', requestRefreshToken);
 
 export default router;
