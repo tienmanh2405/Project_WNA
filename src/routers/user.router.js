@@ -18,7 +18,7 @@ router.post('/register', validation(registerSchema), uploader.single("image"), r
 router.post('/login', validation(loginSchema), login);
 
 // Cập nhật thông tin người dùng
-router.put('/:userId', verifyToken, updateUser);
+router.put('/', verifyToken, uploader.single("image"), updateUser);
 
 // Xóa người dùng chi admin
 router.delete('/:userId', verifyToken, deleteUser);
