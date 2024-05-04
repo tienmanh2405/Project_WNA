@@ -15,9 +15,9 @@ router.get('/', verifyToken, getAllProjects);
 router.post('/', verifyToken, createProject);
 
 // Cập nhật thông tin dự án
-router.put('/:productId', verifyToken, validation(updateProjectSchema), updateProject);
+router.put('/:projectId', verifyToken, validation(updateProjectSchema), updateProject);
 
 // Xóa dự án
-router.delete('/:productId', verifyToken, deleteProject);
+router.delete('/:projectId', verifyToken, deleteProject);
 
 export default router;

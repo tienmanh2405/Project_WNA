@@ -22,19 +22,20 @@ const createProject = async (req, res) => {
 
 const getProjectById = async (req, res) => {
     try {
-        const projectId = req.params.id;
+        const projectId = req.params.projectId;
         const role = req.userData.role;
         if (role == 'user') {
 
             // Tìm kiếm dự án theo ID và userId
             const project = await ProjectModel.findOne({ _id: projectId });
             if (!project) {
-                return res.status(404).json({ message: "Project not found" });
+                throw new Error('Project not found');
             }
             res.status(200).json({ project: project });
+        } else {
+            const project = await ProjectModel.findOne({ _id: projectId });
+            res.status(200).json({ project: project });
         }
-        const project = await ProjectModel.findOne({ _id: projectId });
-        res.status(200).json({ project: project });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -64,23 +65,23 @@ const getAllProjects = async (req, res) => {
 };
 const updateProject = async (req, res) => {
     try {
-        const projectId = req.params.id;
+        const projectId = req.params.projectId;
         const role = req.userData.role;
         if (role == 'user') {
             const userId = req.userData.userId;
             const project = await ProjectModel.findById(projectId);
             if (!project) {
-                return res.status(404).json({ message: "Project not found" });
+                throw new Error('Project not found')
             }
             if (project.user.toString() !== userId) {
-                return res.status(403).json({ message: "No permission to update this project" });
+                throw new Error('No permission to update this project');
             }
         }
         const { nameProject } = req.body;
         // Tìm kiếm và cập nhật dự án trong cơ sở dữ liệu
         const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { nameProject }, { new: true });
         if (!updatedProject) {
-            return res.status(404).json({ message: "Project not found" });
+            throw new Error('Project not found');
         }
         res.status(200).json({ message: "Project updated successfully", project: updatedProject });
     } catch (error) {
