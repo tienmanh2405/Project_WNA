@@ -3,24 +3,20 @@ import { ProjectModel } from "../models/project.model.js";
 
 const createProject = async (req, res) => {
     try {
-        // const role = req.userData.role;
-        // if (role == 'user') {
-        //     const userId = req.userData.userId;
-        //     const reqUserId = req.params.userId;
-        //     if (userId !== reqUserId) {
-        //         return res.status(403).json({
-        //             msg: "No update permission",
-        //         });
-        //     }
-        // }
-        const { user, nameProject } = req.body;
+        const userId = req.userData.userId;
+        const { nameProject } = req.body;
+        const checkNameProject = await ProjectModel.findOne({ nameProject: nameProject });
         // Tạo một bản ghi mới cho dự án
-        const newProject = new ProjectModel({ user, nameProject });
+        if (checkNameProject) {
+            // res.status(400).json({ message: "Project is already exist", success: false });
+            throw new Error("Project is already exist");
+        }
+        const newProject = new ProjectModel({ user: userId, nameProject });
         // Lưu dự án vào cơ sở dữ liệu
         await newProject.save();
-        res.status(201).json({ message: "Project created successfully", project: newProject });
+        res.status(201).json({ message: "Project created successfully", success: true, project: newProject });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ message: error.message, success: false });
     }
 };
 
@@ -29,10 +25,9 @@ const getProjectById = async (req, res) => {
         const projectId = req.params.id;
         const role = req.userData.role;
         if (role == 'user') {
-            const userId = req.userData.userId;
 
             // Tìm kiếm dự án theo ID và userId
-            const project = await ProjectModel.findOne({ _id: projectId, user: userId });
+            const project = await ProjectModel.findOne({ _id: projectId });
             if (!project) {
                 return res.status(404).json({ message: "Project not found" });
             }
