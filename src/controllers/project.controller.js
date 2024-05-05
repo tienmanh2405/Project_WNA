@@ -40,6 +40,30 @@ const getProjectById = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+const searchProjects = async (req, res) => {
+    const searchQuery = req.query.q; // Lấy từ khóa tìm kiếm từ query string
+    try {
+        const role = req.userData.role;
+        let projects;
+
+        if (role === 'user') {
+            projects = await ProjectModel.find({
+                $and: [
+                    { nameProject: { $regex: searchQuery, $options: 'i' } },
+                    { user: req.userData.userId }
+                ]
+            });
+        } else {
+            projects = await ProjectModel.find({ name: { $regex: searchQuery, $options: 'i' } });
+        }
+
+        res.status(200).json({ projects: projects });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 
 const getAllProjects = async (req, res) => {
     try {
@@ -113,4 +137,4 @@ const deleteProject = async (req, res) => {
     }
 };
 
-export { createProject, getProjectById, getAllProjects, updateProject, deleteProject };
+export { createProject, getProjectById, searchProjects, getAllProjects, updateProject, deleteProject };

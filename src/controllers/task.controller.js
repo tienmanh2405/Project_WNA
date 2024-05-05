@@ -14,9 +14,10 @@ const getTasks = async (req, res) => {
             }
             const tasks = await TaskModel.find({ user: userId });
             res.status(200).json({ tasks: tasks });
+        } else {
+            const tasks = await TaskModel.find();
+            res.status(200).json({ tasks: tasks });
         }
-        const tasks = await TaskModel.find();
-        res.status(200).json({ tasks: tasks });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -29,6 +30,7 @@ const getAllTasks = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 const getAllTasksByProduct = async (req, res) => {
     try {
